@@ -22,6 +22,8 @@ if args.task == "img_cls":
     from trainer.ImageCLS import Trainer
 elif args.task == "text_cls":
     from trainer.TextCLS import Trainer
+elif args.task == "img_gen":
+    from trainer.ImageGen import Trainer
 else:
     raise Exception("Wrong task name!")
 
