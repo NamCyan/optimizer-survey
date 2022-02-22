@@ -41,5 +41,9 @@ def get_args():
     # AggMo parameters
     parser.add_argument('--num_betas', default=3, type=int,
                         help='Number of betas')
+
+    # QHM parameter
+    parser.add_argument('--nu', default=0.7, type=float,
+                        help='v in the paper')
     args = parser.parse_args()
     return args
