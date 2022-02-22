@@ -5,6 +5,7 @@ import torch
 import numpy as np
 from nltk.corpus import stopwords
 import nltk
+import os
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -52,6 +53,15 @@ def toDataLoader(emb, label, batch_size, sampler):
     return Data
 
 def load(valid_rate, batch_size, max_length):
+
+    savefolder = "../dat/cola_public/"
+
+    if os.path.isfile(os.path.join(savefolder, "train_{}_{}.pth".format(batch_size, max_length))):
+        train_loader = torch.load(os.path.join(savefolder,"train_{}_{}.pth".format(batch_size, max_length)))
+        valid_loader = torch.load(os.path.join(savefolder,"valid_{}_{}.pth".format(batch_size, max_length)))
+        test_loader = torch.load(os.path.join(savefolder,"test_{}_{}.pth".format(batch_size, max_length)))
+        return train_loader, valid_loader, test_loader, 2
+
     trainset = pd.read_csv("../dat/cola_public/tokenized/in_domain_train.tsv", delimiter='\t', header=None, names=['sentence_source', 'label', 'label_notes', 'sentence'])
     testset = pd.read_csv("../dat/cola_public/tokenized/in_domain_dev.tsv", delimiter='\t', header=None, names=['sentence_source', 'label', 'label_notes', 'sentence'])
     
@@ -79,6 +89,12 @@ def load(valid_rate, batch_size, max_length):
     train_loader = toDataLoader(train_emb, train_labels, batch_size, RandomSampler)
     valid_loader = toDataLoader(valid_emb, valid_labels, batch_size, SequentialSampler)
     test_loader = toDataLoader(test_emb, test_labels, batch_size, SequentialSampler)
+
+    # Save process data
+    torch.save(train_loader, os.path.join(savefolder, "train_{}_{}.pth".format(batch_size, max_length)))
+    torch.save(valid_loader, os.path.join(savefolder, "valid_{}_{}.pth".format(batch_size, max_length)))
+    torch.save(test_loader, os.path.join(savefolder, "test_{}_{}.pth".format(batch_size, max_length)))
+
     return train_loader, valid_loader, test_loader, num_classes
 
 

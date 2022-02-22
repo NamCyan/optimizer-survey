@@ -90,6 +90,7 @@ def load(valid_rate, batch_size, max_length):
     valid_loader = toDataLoader(valid_emb, valid_labels, batch_size, SequentialSampler)
     test_loader = toDataLoader(test_emb, test_labels, batch_size, SequentialSampler)
 
+    # Save process data
     torch.save(train_loader, os.path.join(savefolder, "train_{}_{}.pth".format(batch_size, max_length)))
     torch.save(valid_loader, os.path.join(savefolder, "valid_{}_{}.pth".format(batch_size, max_length)))
     torch.save(test_loader, os.path.join(savefolder, "test_{}_{}.pth".format(batch_size, max_length)))
