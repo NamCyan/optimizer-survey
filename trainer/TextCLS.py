@@ -1,5 +1,5 @@
 import math
-import torch_optimizer as optim
+import torch.optim as optim
 import torch
 import copy
 from time import time
