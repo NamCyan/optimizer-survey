@@ -15,9 +15,9 @@ def load(valid_rate, batch_size):
     mean=[x/255 for x in [125.3,123.0,113.9]]
     std=[x/255 for x in [63.0,62.1,66.7]]
 
-    trainset= datasets.CIFAR10('../dat/',train=True,download=True,
+    trainset= datasets.CIFAR10(savefolder,train=True,download=True,
                                     transform=transforms.Compose([transforms.ToTensor(),transforms.Normalize(mean,std)]))
-    test= datasets.CIFAR10('../dat/',train=False,download=True,
+    test= datasets.CIFAR10(savefolder,train=False,download=True,
                                     transform=transforms.Compose([transforms.ToTensor(),transforms.Normalize(mean,std)]))
 
     valid_length = int(valid_rate * len(trainset))
