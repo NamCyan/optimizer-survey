@@ -61,9 +61,16 @@ class Trainer():
             time1 = time()
             for step, batch in enumerate(self.train_data):
                 batch = [t.to(self.device) for t in batch]
-                input, label = batch
-                logits = self.model(input)
-                loss = nn.CrossEntropyLoss()(logits, label)
+                if "bert" in self.model.__class__.__name__:
+                    input_ids, attention_masks, token_type_ids, labels = batch
+                    loss, logits = self.model(input_ids= input_ids, 
+                                              attention_masks= attention_masks, 
+                                              token_type_ids= token_type_ids, 
+                                              labels= labels)
+                else:
+                    input, label = batch
+                    logits = self.model(input)
+                    loss = nn.CrossEntropyLoss()(logits, label)
                 loss.backward()
 
                 nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
@@ -102,9 +109,17 @@ class Trainer():
 
         for step, batch in enumerate(data):
             batch = [t.to(self.device) for t in batch]
-            input, label = batch
-            logits = self.model(input)
-            loss = nn.CrossEntropyLoss()(logits, label)
+
+            if "bert" in self.model.__class__.__name__:
+                input_ids, attention_masks, token_type_ids, labels = batch
+                loss, logits = self.model(input_ids= input_ids, 
+                                          attention_masks= attention_masks, 
+                                          token_type_ids= token_type_ids, 
+                                          labels= labels)
+            else:
+                input, label = batch
+                logits = self.model(input)
+                loss = nn.CrossEntropyLoss()(logits, label)
 
             output = F.log_softmax(logits, dim=1)
             _, pred = output.max(1)
