@@ -8,6 +8,7 @@ import numpy as np
 import torch.nn.functional as F
 from sklearn.metrics import f1_score, confusion_matrix, accuracy_score, classification_report
 from copy import deepcopy
+from trainer.optimizer import get_optimizer
 
 class Trainer():
     def __init__(self, args, model, train_data, valid_data, test_data, log_file = None):
@@ -19,36 +20,11 @@ class Trainer():
         self.train_data = train_data
         self.valid_data = valid_data
         self.test_data = test_data
-        self.optimizer = self.get_optimizer()
+        self.optimizer = get_optimizer(args, self.model)
         self.total_training_time = 0
         self.train_losses, self.train_accs = [], []
         self.valid_losses, self.valid_accs = [], []
         # self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones= milestones, gamma= 0.3)
-
-    def get_optimizer(self):
-        if self.args.optim == "Adam":
-            return torch.optim.Adam(self.model.parameters(), lr=self.args.lr)
-        elif self.args.optim == "AdamW":
-            return torch.optim.Adam(self.model.parameters(), lr=self.args.lr)
-        elif self.args.optim == "SGD":
-            return torch.optim.SGD(self.model.parameters(), lr=self.args.lr)
-        elif self.args.optim == "AggMo":
-          betas = []
-          for i in range(self.args.aggmo_num_betas):
-              beta = 1 - math.pow(0.1, i)
-              betas.append(beta)
-          optimizer = optim.AggMo(self.model.parameters(), lr=self.args.lr, betas= betas)
-          return optimizer
-        elif self.args.optim == "QHM":
-            betas = self.args.qhm_beta
-            optimizer = optim.QHM(self.model.parameters(), lr=self.args.lr, momentum=betas, nu=self.args.nu)
-            return optimizer
-        elif self.args.optim == "QHAdam":
-            betas = [self.args.qhadam_beta1, self.args.qhadam_beta2]
-            optimizer = optim.QHAdam(self.model.parameters(), lr=self.args.lr, nu=self.args.nu, betas= betas)
-            return optimizer
-        else:
-            raise Exception('Have not implement {} optimizer yet'.format(self.args.optim))
 
     def train(self):
         self.model.train()
