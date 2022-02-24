@@ -97,6 +97,63 @@ def load(valid_rate, batch_size, max_length):
 
     return train_loader, valid_loader, test_loader, num_classes
 
+def loadBERT(valid_rate, batch_size, max_length, tokenizer):
+    savefolder = "../dat/cola_public/"
 
+    if os.path.isfile(os.path.join(savefolder, "bert_train_{}_{}.pth".format(batch_size, max_length))):
+        train_loader = torch.load(os.path.join(savefolder,"bert_train_{}_{}.pth".format(batch_size, max_length)))
+        valid_loader = torch.load(os.path.join(savefolder,"bert_valid_{}_{}.pth".format(batch_size, max_length)))
+        test_loader = torch.load(os.path.join(savefolder,"bert_test_{}_{}.pth".format(batch_size, max_length)))
+        return train_loader, valid_loader, test_loader, 2
+    
+    trainset = pd.read_csv("../dat/cola_public/tokenized/in_domain_train.tsv", delimiter='\t', header=None, names=['sentence_source', 'label', 'label_notes', 'sentence'])
+    testset = pd.read_csv("../dat/cola_public/tokenized/in_domain_dev.tsv", delimiter='\t', header=None, names=['sentence_source', 'label', 'label_notes', 'sentence'])
+    
+    train_sentences = trainset.sentence.values
+    train_labels = trainset.label.values
+    num_classes = len(set(train_labels))
+    
+    valid_length = int(valid_rate * len(trainset))
+    train_length = len(trainset) - valid_length
+
+    valid_sentences = train_sentences[:valid_length]
+    valid_labels = train_labels[:valid_length]
+
+    train_sentences = train_sentences[valid_length:]
+    train_labels = train_labels[valid_length:]
+
+    test_sentences = testset.sentence.values
+    test_labels = testset.label.values
+
+    tokenized_train = tokenizer(train_sentences, padding="max_length", truncation=True, max_length= max_length)
+    tokenized_valid = tokenizer(valid_sentences, padding="max_length", truncation=True, max_length= max_length)
+    tokenized_test = tokenizer(test_sentences, padding="max_length", truncation=True, max_length= max_length)
+
+    train_token_ids, train_attention_mask, train_token_type_ids = tokenized_train["input_ids"], tokenized_train["attention_mask"], tokenized_train["token_type_ids"]
+    valid_token_ids, valid_attention_mask, valid_token_type_ids = tokenized_valid["input_ids"], tokenized_valid["attention_mask"], tokenized_valid["token_type_ids"]
+    test_token_ids, test_attention_mask, test_token_type_ids = tokenized_test["input_ids"], tokenized_test["attention_mask"], tokenized_test["token_type_ids"]
+
+    def toDataLoader(input_ids, attention_mask, token_type_ids, labels, batch_size, sampler):
+        input_ids_ = torch.tensor(input_ids, dtype= torch.long)
+        attention_mask_ = torch.tensor(attention_mask, dtype= torch.long)
+        token_type_ids_ = torch.tensor(token_type_ids, dtype= torch.long)
+        labels_ = torch.tensor(labels, dtype= torch.long)
+        # real_length_ = torch.tensor(real_length, dtype= torch.long)
+
+        TensorData = TensorDataset(input_ids_, attention_mask_, token_type_ids_, labels_)
+        Sampler = sampler(TensorData)
+    
+        Data = DataLoader(TensorData, sampler=Sampler, batch_size= batch_size)
+        return Data
+
+    train_loader = toDataLoader(train_token_ids, train_attention_mask, train_token_type_ids, train_labels, batch_size, RandomSampler)
+    valid_loader = toDataLoader(valid_token_ids, valid_attention_mask, valid_token_type_ids, valid_labels, batch_size, SequentialSampler)
+    test_loader = toDataLoader(test_token_ids, test_attention_mask, test_token_type_ids, test_labels, batch_size, SequentialSampler)
+    
+    # Save process data
+    torch.save(train_loader, os.path.join(savefolder, "bert_train_{}_{}.pth".format(batch_size, max_length)))
+    torch.save(valid_loader, os.path.join(savefolder, "bert_valid_{}_{}.pth".format(batch_size, max_length)))
+    torch.save(test_loader, os.path.join(savefolder, "bert_test_{}_{}.pth".format(batch_size, max_length)))
+    return train_loader, valid_loader, test_loader, num_classes
 
 
