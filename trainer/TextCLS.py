@@ -42,10 +42,11 @@ class Trainer():
                 batch = [t.to(self.device) for t in batch]
                 if "bert" in self.args.model_name.lower():
                     input_ids, attention_mask, token_type_ids, labels = batch
-                    loss, logits = self.model(input_ids= input_ids, 
+                    outputs = self.model(input_ids= input_ids, 
                                               attention_mask= attention_mask, 
                                               token_type_ids= token_type_ids, 
                                               labels= labels)
+                    loss, logits = outputs.loss, outputs.logits
                 else:
                     input, label = batch
                     logits = self.model(input)
@@ -91,10 +92,11 @@ class Trainer():
 
             if "bert" in self.args.model_name.lower():
                 input_ids, attention_mask, token_type_ids, labels = batch
-                loss, logits = self.model(input_ids= input_ids, 
+                outputs = self.model(input_ids= input_ids, 
                                           attention_mask= attention_mask, 
                                           token_type_ids= token_type_ids, 
                                           labels= labels)
+                loss, logits = outputs.loss, outputs.logits
             else:
                 input, label = batch
                 logits = self.model(input)
