@@ -78,7 +78,7 @@ class Trainer():
                 self.optimizer.step()
                 # print(type(input), input.shape, type(x_reconstructed), x_reconstructed.shape)
                 fid = self.model.calculate_fid(input, x_reconstructed)
-                # FID += fid.item()
+                FID += fid.item()
                 Reconstruction_loss += reconstruction_loss.item()
                 Kl_divergence_loss += kl_divergence_loss.item()
                 Total_loss += loss.item()
