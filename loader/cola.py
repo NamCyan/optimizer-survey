@@ -41,16 +41,6 @@ def get_embeddings(sentences, word2emb, max_length):
         embeddings.append(embedding)
     return np.array(embeddings)#, np.array(real_length)
 
-def toDataLoader(emb, label, batch_size, sampler):
-    ebm_ = torch.tensor(emb, dtype= torch.float)
-    label_ = torch.tensor(label, dtype= torch.long)
-    # real_length_ = torch.tensor(real_length, dtype= torch.long)
-
-    TensorData = TensorDataset(ebm_, label_)
-    Sampler = sampler(TensorData)
-    
-    Data = DataLoader(TensorData, sampler=Sampler, batch_size= batch_size)
-    return Data
 
 def load(valid_rate, batch_size, max_length):
 
@@ -85,6 +75,17 @@ def load(valid_rate, batch_size, max_length):
     train_emb = get_embeddings(train_sentences, word2emb, max_length)
     valid_emb = get_embeddings(valid_sentences, word2emb, max_length)
     test_emb = get_embeddings(test_sentences, word2emb, max_length)
+
+    def toDataLoader(emb, label, batch_size, sampler):
+        ebm_ = torch.tensor(emb, dtype= torch.float)
+        label_ = torch.tensor(label, dtype= torch.long)
+        # real_length_ = torch.tensor(real_length, dtype= torch.long)
+
+        TensorData = TensorDataset(ebm_, label_)
+        Sampler = sampler(TensorData)
+        
+        Data = DataLoader(TensorData, sampler=Sampler, batch_size= batch_size)
+        return Data
 
     train_loader = toDataLoader(train_emb, train_labels, batch_size, RandomSampler)
     valid_loader = toDataLoader(valid_emb, valid_labels, batch_size, SequentialSampler)
