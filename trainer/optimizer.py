@@ -23,7 +23,7 @@ def get_optimizer(args, model):
     elif args.optim == "QHAdam":
         betas = [args.qhadam_beta1, args.qhadam_beta2]
         nus = [args.qhadam_nu1, args.qhadam_nu2]
-        optimizer = optim.QHAdam(model.parameters(), lr= args.lr, nu= nus, betas= betas)
+        optimizer = optim.QHAdam(model.parameters(), lr= args.lr, nus= nus, betas= betas)
         return optimizer
     else:
         raise Exception('Have not implement {} optimizer yet'.format(args.optim))

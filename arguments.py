@@ -49,6 +49,10 @@ def get_args():
     parser.add_argument('--qhm_beta', default=0.9, type=float,
                         help='v in the paper')
     # QHAdam parameter
+    parser.add_argument('--qhadam_nu1', default=0.9, type=float,
+                        help='qhadam v1')
+    parser.add_argument('--qhadam_nu2', default=0.999, type=float,
+                        help='qhadam v2')
     parser.add_argument('--qhadam_beta1', default=0.9, type=float,
                         help='qhadam beta1')
     parser.add_argument('--qhadam_beta2', default=0.999, type=float,
