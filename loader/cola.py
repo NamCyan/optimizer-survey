@@ -42,14 +42,14 @@ def get_embeddings(sentences, word2emb, max_length):
     return np.array(embeddings)#, np.array(real_length)
 
 
-def load(valid_rate, batch_size, max_length):
+def load(valid_rate, batch_size, max_length, model_name):
 
     savefolder = "../dat/cola_public/"
 
-    if os.path.isfile(os.path.join(savefolder, "train_{}_{}.pth".format(batch_size, max_length))):
-        train_loader = torch.load(os.path.join(savefolder,"train_{}_{}.pth".format(batch_size, max_length)))
-        valid_loader = torch.load(os.path.join(savefolder,"valid_{}_{}.pth".format(batch_size, max_length)))
-        test_loader = torch.load(os.path.join(savefolder,"test_{}_{}.pth".format(batch_size, max_length)))
+    if os.path.isfile(os.path.join(savefolder, "{}_train_{}_{}.pth".format(model_name, batch_size, max_length))):
+        train_loader = torch.load(os.path.join(savefolder,"{}_train_{}_{}.pth".format(model_name, batch_size, max_length)))
+        valid_loader = torch.load(os.path.join(savefolder,"{}_valid_{}_{}.pth".format(model_name, batch_size, max_length)))
+        test_loader = torch.load(os.path.join(savefolder,"{}_test_{}_{}.pth".format(model_name, batch_size, max_length)))
         return train_loader, valid_loader, test_loader, 2
 
     trainset = pd.read_csv("../dat/cola_public/tokenized/in_domain_train.tsv", delimiter='\t', header=None, names=['sentence_source', 'label', 'label_notes', 'sentence'])
@@ -92,19 +92,19 @@ def load(valid_rate, batch_size, max_length):
     test_loader = toDataLoader(test_emb, test_labels, batch_size, SequentialSampler)
 
     # Save process data
-    torch.save(train_loader, os.path.join(savefolder, "train_{}_{}.pth".format(batch_size, max_length)))
-    torch.save(valid_loader, os.path.join(savefolder, "valid_{}_{}.pth".format(batch_size, max_length)))
-    torch.save(test_loader, os.path.join(savefolder, "test_{}_{}.pth".format(batch_size, max_length)))
+    torch.save(train_loader, os.path.join(savefolder, "{}_train_{}_{}.pth".format(model_name, batch_size, max_length)))
+    torch.save(valid_loader, os.path.join(savefolder, "{}_valid_{}_{}.pth".format(model_name, batch_size, max_length)))
+    torch.save(test_loader, os.path.join(savefolder, "{}_test_{}_{}.pth".format(model_name, batch_size, max_length)))
 
     return train_loader, valid_loader, test_loader, num_classes
 
-def loadBERT(valid_rate, batch_size, max_length, tokenizer):
+def loadBERT(valid_rate, batch_size, max_length, tokenizer, model_name):
     savefolder = "../dat/cola_public/"
 
-    if os.path.isfile(os.path.join(savefolder, "bert_train_{}_{}.pth".format(batch_size, max_length))):
-        train_loader = torch.load(os.path.join(savefolder,"bert_train_{}_{}.pth".format(batch_size, max_length)))
-        valid_loader = torch.load(os.path.join(savefolder,"bert_valid_{}_{}.pth".format(batch_size, max_length)))
-        test_loader = torch.load(os.path.join(savefolder,"bert_test_{}_{}.pth".format(batch_size, max_length)))
+    if os.path.isfile(os.path.join(savefolder, "{}_train_{}_{}.pth".format(model_name, batch_size, max_length))):
+        train_loader = torch.load(os.path.join(savefolder,"{}_train_{}_{}.pth".format(model_name, batch_size, max_length)))
+        valid_loader = torch.load(os.path.join(savefolder,"{}_valid_{}_{}.pth".format(model_name, batch_size, max_length)))
+        test_loader = torch.load(os.path.join(savefolder,"{}_test_{}_{}.pth".format(model_name, batch_size, max_length)))
         return train_loader, valid_loader, test_loader, 2
     
     trainset = pd.read_csv("../dat/cola_public/tokenized/in_domain_train.tsv", delimiter='\t', header=None, names=['sentence_source', 'label', 'label_notes', 'sentence'])
@@ -152,9 +152,9 @@ def loadBERT(valid_rate, batch_size, max_length, tokenizer):
     test_loader = toDataLoader(test_token_ids, test_attention_mask, test_token_type_ids, test_labels, batch_size, SequentialSampler)
     
     # Save process data
-    torch.save(train_loader, os.path.join(savefolder, "bert_train_{}_{}.pth".format(batch_size, max_length)))
-    torch.save(valid_loader, os.path.join(savefolder, "bert_valid_{}_{}.pth".format(batch_size, max_length)))
-    torch.save(test_loader, os.path.join(savefolder, "bert_test_{}_{}.pth".format(batch_size, max_length)))
+    torch.save(train_loader, os.path.join(savefolder, "{}_train_{}_{}.pth".format(model_name, batch_size, max_length)))
+    torch.save(valid_loader, os.path.join(savefolder, "{}_valid_{}_{}.pth".format(model_name, batch_size, max_length)))
+    torch.save(test_loader, os.path.join(savefolder, "{}_test_{}_{}.pth".format(model_name, batch_size, max_length)))
     return train_loader, valid_loader, test_loader, num_classes
 
 

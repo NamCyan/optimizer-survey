@@ -6,26 +6,34 @@ import torch
 
 args = get_args()
 
+if args.model_name == "BERT":
+    from transformers import BertTokenizer
+    tokenizer = BertTokenizer.from_pretrained("bert-base-cased", do_lower_case= True)
+elif args.model_name == "DistilBERT":
+    from transformers import DistilBertTokenizer
+    tokenizer = BertTokenizer.from_pretrained("distilbert-base-cased", do_lower_case= True)
+
+
 if args.dataset == "cifar10":
     from loader import cifar10 as dataloader
     loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size)
 elif args.dataset == "cola":
-    from loader import cola as dataloader
-    loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length)
+    if "bert" in args.model_name.lower():
+        from loader import cola as dataloader
+        loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length, tokenizer, args.model_name)
+    else:
+        from loader import cola as dataloader
+        loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length, args.model_name)
 elif args.dataset == "imdb":
-    from loader import imdb as dataloader
-    loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length)
+    if "bert" in args.model_name.lower():
+        from loader import imdb as dataloader
+        loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length, tokenizer, args.model_name)
+    else:
+        from loader import imdb as dataloader
+        loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length, args.model_name)
 else:
     raise Exception("Do not support {} dataset".format(args.dataset))
-    
-if args.task == "img_cls":
-    from trainer.ImageCLS import Trainer
-elif args.task == "text_cls":
-    from trainer.TextCLS import Trainer
-elif args.task == "img_gen":
-    from trainer.ImageGen import Trainer
-else:
-    raise Exception("Wrong task name!")
+
 
 if args.model_name == "LeNet":
     from models.LeNet import Net
@@ -36,6 +44,24 @@ elif args.model_name == "ResNet18":
 elif args.model_name == "LSTM":
     from models.LSTM import Net
     model = Net(num_classes= num_classes)
+elif args.model_name == "BERT":
+    from transformers import BertForSequenceClassification
+    model = BertForSequenceClassification.from_pretrained("bert-base-cased", num_labels= num_classes)
+elif args.model_name == "DistilBERT":
+    from transformers import DistilBertForSequenceClassification
+    model = BertForSequenceClassification.from_pretrained("distilbert-base-cased", num_labels= num_classes)
+
+if args.task == "img_cls":
+    from trainer.ImageCLS import Trainer
+    trainer = Trainer(args, model, loader_train, loader_valid, loader_test)
+elif args.task == "text_cls":
+    from trainer.TextCLS import Trainer
+    trainer = Trainer(args, model, loader_train, loader_valid, loader_test)
+elif args.task == "img_gen":
+    from trainer.ImageGen import Trainer
+    trainer = Trainer(args, model, loader_train, loader_valid, loader_test)
+else:
+    raise Exception("Wrong task name!")
 
 model.to(args.device)
 random.seed(args.seed)
@@ -53,7 +79,6 @@ for k,v in list_args:
     print("\t{} : {}".format(k,v))
 print("="*100)
 
-trainer = Trainer(args, model, loader_train, loader_valid, loader_test)
 trainer.train()
 
 test_loss, test_acc, test_f1, test_report = trainer.eval(trainer.model, loader_test)

@@ -61,7 +61,7 @@ class Trainer():
             time1 = time()
             for step, batch in enumerate(self.train_data):
                 batch = [t.to(self.device) for t in batch]
-                if "bert" in self.model.__class__.__name__:
+                if "bert" in self.args.model_name.lower():
                     input_ids, attention_masks, token_type_ids, labels = batch
                     loss, logits = self.model(input_ids= input_ids, 
                                               attention_masks= attention_masks, 
@@ -110,7 +110,7 @@ class Trainer():
         for step, batch in enumerate(data):
             batch = [t.to(self.device) for t in batch]
 
-            if "bert" in self.model.__class__.__name__:
+            if "bert" in self.args.model_name.lower():
                 input_ids, attention_masks, token_type_ids, labels = batch
                 loss, logits = self.model(input_ids= input_ids, 
                                           attention_masks= attention_masks, 
