@@ -14,7 +14,9 @@ def get_args():
     parser.add_argument('--model_name', default='LeNet', type=str, 
                         choices= ["LeNet", 
                                   "ResNet18",
-                                  "LSTM"],
+                                  "LSTM",
+                                  "BERT",
+                                  "DistilBERT"],
                         help='model type')
     parser.add_argument('--optim', default='AggMo', type=str, required=True,
                         choices= ["Adam", 

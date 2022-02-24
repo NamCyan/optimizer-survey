@@ -18,18 +18,16 @@ if args.dataset == "cifar10":
     from loader import cifar10 as dataloader
     loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size)
 elif args.dataset == "cola":
+    from loader import cola as dataloader
     if "bert" in args.model_name.lower():
-        from loader import cola as dataloader
-        loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length, tokenizer, args.model_name)
+        loader_train, loader_valid, loader_test, num_classes = dataloader.loadBERT(args.valid_rate, args.batch_size, args.max_length, tokenizer, args.model_name)
     else:
-        from loader import cola as dataloader
         loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length, args.model_name)
 elif args.dataset == "imdb":
+    from loader import imdb as dataloader
     if "bert" in args.model_name.lower():
-        from loader import imdb as dataloader
         loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length, tokenizer, args.model_name)
     else:
-        from loader import imdb as dataloader
         loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length, args.model_name)
 else:
     raise Exception("Do not support {} dataset".format(args.dataset))
