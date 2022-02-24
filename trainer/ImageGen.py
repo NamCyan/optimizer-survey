@@ -78,7 +78,7 @@ class Trainer():
                 self.optimizer.step()
                 # print(type(input), input.shape, type(x_reconstructed), x_reconstructed.shape)
                 fid = self.model.calculate_fid(input, x_reconstructed)
-                FID += fid.item()
+                # FID += fid.item()
                 Reconstruction_loss += reconstruction_loss.item()
                 Kl_divergence_loss += kl_divergence_loss.item()
                 Total_loss += loss.item()
@@ -102,7 +102,7 @@ class Trainer():
 
 
             if epoch % 1 == 0 or epoch == self.args.epochs - 1:
-                print("Epoch {:3d} |Total_loss = {:.3f}, Reconstruction loss = {:.3f}, Kl divergence loss = {:.3f}, FID = {:.3f} || ".format(epoch + 1, Reconstruction_loss, Kl_divergence_loss, FID), end= "")
+                print("Epoch {:3d} |Total_loss = {:.3f}, Reconstruction loss = {:.3f}, Kl divergence loss = {:.3f}, FID = {:.3f} || ".format(epoch + 1,Total_loss, Reconstruction_loss, Kl_divergence_loss, FID), end= "")
 
 
         print("Training time: {}s".format(self.total_training_time))
