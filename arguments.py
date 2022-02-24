@@ -19,7 +19,8 @@ def get_args():
                                   "DistilBERT"],
                         help='model type')
     parser.add_argument('--optim', default='AggMo', type=str, required=True,
-                        choices= ["Adam", 
+                        choices= ["Adam",
+                                  "AdamW", 
                                   "AggMo", 
                                   "QHM", 
                                   "QHAdam"],
@@ -34,18 +35,23 @@ def get_args():
                         help='device to train')
     parser.add_argument('--valid_rate', default=0.1, type=float,
                         help='Valid split rate')
-    parser.add_argument('--betas', default=0.9, type=float,
-                        help='betas')
     # Text Classification
     parser.add_argument('--max_length', default=64, type=int, 
                         help='Max sequence length')
 
     # AggMo parameters
-    parser.add_argument('--num_betas', default=3, type=int,
+    parser.add_argument('--aggmo_num_betas', default=3, type=int,
                         help='Number of betas')
 
     # QHM parameter
-    parser.add_argument('--nu', default=0.7, type=float,
+    parser.add_argument('--qhm_nu', default=0.7, type=float,
                         help='v in the paper')
+    parser.add_argument('--qhm_beta', default=0.9, type=float,
+                        help='v in the paper')
+    # QHAdam parameter
+    parser.add_argument('--qhadam_beta1', default=0.9, type=float,
+                        help='qhadam beta1')
+    parser.add_argument('--qhadam_beta2', default=0.999, type=float,
+                        help='qhadam beta2')
     args = parser.parse_args()
     return args

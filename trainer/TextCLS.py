@@ -28,6 +28,8 @@ class Trainer():
     def get_optimizer(self):
         if self.args.optim == "Adam":
             return torch.optim.Adam(self.model.parameters(), lr=self.args.lr)
+        elif self.args.optim == "AdamW":
+            return torch.optim.Adam(self.model.parameters(), lr=self.args.lr)
         elif self.args.optim == "SGD":
             return torch.optim.SGD(self.model.parameters(), lr=self.args.lr)
         elif self.args.optim == "AggMo":
@@ -62,9 +64,9 @@ class Trainer():
             for step, batch in enumerate(self.train_data):
                 batch = [t.to(self.device) for t in batch]
                 if "bert" in self.args.model_name.lower():
-                    input_ids, attention_masks, token_type_ids, labels = batch
+                    input_ids, attention_mask, token_type_ids, labels = batch
                     loss, logits = self.model(input_ids= input_ids, 
-                                              attention_masks= attention_masks, 
+                                              attention_mask= attention_mask, 
                                               token_type_ids= token_type_ids, 
                                               labels= labels)
                 else:
@@ -111,9 +113,9 @@ class Trainer():
             batch = [t.to(self.device) for t in batch]
 
             if "bert" in self.args.model_name.lower():
-                input_ids, attention_masks, token_type_ids, labels = batch
+                input_ids, attention_mask, token_type_ids, labels = batch
                 loss, logits = self.model(input_ids= input_ids, 
-                                          attention_masks= attention_masks, 
+                                          attention_mask= attention_mask, 
                                           token_type_ids= token_type_ids, 
                                           labels= labels)
             else:

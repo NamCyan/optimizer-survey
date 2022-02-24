@@ -107,11 +107,11 @@ def loadBERT(valid_rate, batch_size, max_length, tokenizer, model_name):
         test_loader = torch.load(os.path.join(savefolder,"{}_test_{}_{}.pth".format(model_name, batch_size, max_length)))
         return train_loader, valid_loader, test_loader, 2
     
-    trainset = pd.read_csv("../dat/cola_public/tokenized/in_domain_train.tsv", delimiter='\t', header=None, names=['sentence_source', 'label', 'label_notes', 'sentence'])
-    testset = pd.read_csv("../dat/cola_public/tokenized/in_domain_dev.tsv", delimiter='\t', header=None, names=['sentence_source', 'label', 'label_notes', 'sentence'])
+    trainset = pd.read_csv("../dat/cola_public/raw/in_domain_train.tsv", delimiter='\t', header=None, names=['sentence_source', 'label', 'label_notes', 'sentence'])
+    testset = pd.read_csv("../dat/cola_public/raw/in_domain_dev.tsv", delimiter='\t', header=None, names=['sentence_source', 'label', 'label_notes', 'sentence'])
     
-    train_sentences = trainset.sentence.values
-    train_labels = trainset.label.values
+    train_sentences = list(trainset.sentence.values)
+    train_labels = list(trainset.label.values)
     num_classes = len(set(train_labels))
     
     valid_length = int(valid_rate * len(trainset))
@@ -123,8 +123,8 @@ def loadBERT(valid_rate, batch_size, max_length, tokenizer, model_name):
     train_sentences = train_sentences[valid_length:]
     train_labels = train_labels[valid_length:]
 
-    test_sentences = testset.sentence.values
-    test_labels = testset.label.values
+    test_sentences = list(testset.sentence.values)
+    test_labels = list(testset.label.values)
 
     tokenized_train = tokenizer(train_sentences, padding="max_length", truncation=True, max_length= max_length)
     tokenized_valid = tokenizer(valid_sentences, padding="max_length", truncation=True, max_length= max_length)

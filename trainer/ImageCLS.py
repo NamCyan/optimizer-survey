@@ -28,21 +28,23 @@ class Trainer():
     def get_optimizer(self):
         if self.args.optim == "Adam":
             return torch.optim.Adam(self.model.parameters(), lr=self.args.lr)
+        elif self.args.optim == "AdamW":
+            return torch.optim.Adam(self.model.parameters(), lr=self.args.lr)
         elif self.args.optim == "SGD":
             return torch.optim.SGD(self.model.parameters(), lr=self.args.lr)
         elif self.args.optim == "AggMo":
           betas = []
-          for i in range(self.args.num_betas):
+          for i in range(self.args.aggmo_num_betas):
               beta = 1 - math.pow(0.1, i)
               betas.append(beta)
           optimizer = optim.AggMo(self.model.parameters(), lr=self.args.lr, betas= betas)
           return optimizer
         elif self.args.optim == "QHM":
-            betas = self.args.betas
+            betas = self.args.qhm_beta
             optimizer = optim.QHM(self.model.parameters(), lr=self.args.lr, momentum=betas, nu=self.args.nu)
             return optimizer
         elif self.args.optim == "QHAdam":
-            betas = [0.9, 0.999]
+            betas = [self.args.qhadam_beta1, self.args.qhadam_beta2]
             optimizer = optim.QHAdam(self.model.parameters(), lr=self.args.lr, nu=self.args.nu, betas= betas)
             return optimizer
         else:
