@@ -11,7 +11,7 @@ if args.model_name == "BERT":
     tokenizer = BertTokenizer.from_pretrained("bert-base-cased", do_lower_case= True)
 elif args.model_name == "DistilBERT":
     from transformers import DistilBertTokenizer
-    tokenizer = BertTokenizer.from_pretrained("distilbert-base-cased", do_lower_case= True)
+    tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-cased", do_lower_case= True)
 
 
 if args.dataset == "cifar10":
