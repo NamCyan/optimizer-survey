@@ -49,7 +49,7 @@ elif args.model_name == "BERT":
     model = BertForSequenceClassification.from_pretrained("bert-base-cased", num_labels= num_classes)
 elif args.model_name == "DistilBERT":
     from transformers import DistilBertForSequenceClassification
-    model = BertForSequenceClassification.from_pretrained("distilbert-base-cased", num_labels= num_classes)
+    model = DistilBertForSequenceClassification.from_pretrained("distilbert-base-cased", num_labels= num_classes)
 
 if args.task == "img_cls":
     from trainer.ImageCLS import Trainer
