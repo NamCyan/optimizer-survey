@@ -3,8 +3,30 @@ import math
 import random
 import numpy as np
 import torch
+import json
+from time import time
+import os, csv
 
 args = get_args()
+list_args = args._get_kwargs()
+
+optim_parameter_path = "../results/optim_parameters.json"
+with open(optim_parameter_path, "r") as f:
+    exp_ids = json.load(f)
+
+log_dir = "../results/log/"
+new_exp_id = len(os.listdir(log_dir))
+log_file = "{}_{}_{}_{}.csv".format(args.optim, args.task, args.model_name, new_exp_id)
+args.log_file = os.path.join(log_dir, log_file)
+
+# save new experiment parameters
+# assert log_file not in exp_ids
+exp_ids[log_file] = {}
+for param in list_args:
+    exp_ids[log_file][param[0]] = param[1]
+
+with open(optim_parameter_path, "w") as f:
+    json.dump(exp_ids, f, indent= 4) 
 
 if args.model_name == "BERT":
     from transformers import BertTokenizer
@@ -72,15 +94,26 @@ print(model)
 print("="*100)
 
 print("Arguments:")
-list_args = args._get_kwargs()
 for k,v in list_args:
     print("\t{} : {}".format(k,v))
 print("="*100)
 
 trainer.train()
 
+time1= time()
 test_loss, test_acc, test_f1, test_report = trainer.eval(trainer.model, loader_test)
+time2= time()
+with open(args.log_file, "a") as f:
+    writer = csv.writer(f)
+    writer.writerow([args.epochs,
+                  None, None, None, 
+                  None, None, None,
+                  test_loss, test_acc, test_f1,
+                  time2 - time1])
 
 print("="*100)
 print("Test: loss= {:.3f} || accuracy= {:.3f}% || F1= {:.3f}%".format(test_loss, test_acc, test_f1))
 print("Report \n", test_report)
+
+model_save_path = args.log_file.replace(".csv", ".pt").replace("log", "models")
+torch.save(trainer.model.state_dict(), model_save_path)
