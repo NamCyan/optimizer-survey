@@ -1,3 +1,5 @@
+import os
+import csv
 import math
 import torch_optimizer as optim
 import torch
@@ -12,11 +14,11 @@ from trainer.optimizer import get_optimizer
 
 
 class Trainer():
-    def __init__(self, args, model, train_data, valid_data, test_data, log_file = None):
+    def __init__(self, args, model, train_data, valid_data, test_data):
         super(Trainer, self).__init__()
         self.model = model.to(args.device)
         self.device = args.device
-        self.log_file = log_file
+        self.log_file = args.log_file
         self.args = args
         self.train_data = train_data
         self.valid_data = valid_data
@@ -76,6 +78,18 @@ class Trainer():
             if epoch % 10 == 0 or epoch == self.args.epochs - 1:
                 print("Epoch {:3d} | Train: loss= {:.3f}, acc= {:.3f}% || ".format(epoch + 1, train_loss, train_acc*100), end= "")
                 print("Valid: loss= {:.3f}, acc= {:.3f}%, macro_f1= {:.3f}% || Best loss: {:.3f} || Time= {:.4f}s ||".format(valid_loss, valid_acc*100, valid_macro_f1*100, best_valid_loss, time2- time1), end= "\n")
+
+            # save result
+            header = ['epoch', 'train_loss', 'train_acc', 'train_f1', 'valid_loss', 'valid_acc', 'valid_f1', 'test_loss', 'test_acc',  'test_f1', 'time']
+            with open(self.log_file, "a") as f:
+                writer = csv.writer(f)
+                if epoch == 0:
+                    writer.writerow(header)
+                writer.writerow([epoch, 
+                              train_loss, train_acc, train_macro_f1, 
+                              valid_loss, valid_acc, valid_macro_f1,
+                              None, None, None,
+                              time2 - time1])
 
         print("Training time: {}s".format(self.total_training_time))
         print("Epoch time: {}s".format(self.total_training_time/self.args.epochs))
