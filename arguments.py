@@ -20,6 +20,7 @@ def get_args():
                         help='model type')
     parser.add_argument('--optim', default='AggMo', type=str, required=True,
                         choices= ["Adam",
+                                  "AMSGrad",
                                   "AdamW", 
                                   "AggMo", 
                                   "QHM", 
@@ -38,6 +39,26 @@ def get_args():
     # Text Classification
     parser.add_argument('--max_length', default=64, type=int, 
                         help='Max sequence length')
+
+    # Adam parameter
+    parser.add_argument('--adam_beta1', default=0.9, type=float,
+                        help='adam beta1')
+    parser.add_argument('--adam_beta2', default=0.999, type=float,
+                        help='adam beta2')
+
+    # AMSGrad parameter
+    parser.add_argument('--amsgrad_beta1', default=0.9, type=float,
+                        help='amsgrad beta1')
+    parser.add_argument('--amsgrad_beta2', default=0.999, type=float,
+                        help='amsgrad beta2')
+
+    # AdamW parameter
+    parser.add_argument('--adamw_beta1', default=0.9, type=float,
+                        help='adamw beta1')
+    parser.add_argument('--adamw_beta2', default=0.999, type=float,
+                        help='adamw beta2')
+    parser.add_argument('--adamw_weight_decay', default=0.01, type=float,
+                        help='adamw weight decay')
 
     # AggMo parameters
     parser.add_argument('--aggmo_num_betas', default=3, type=int,
