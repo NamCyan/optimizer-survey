@@ -15,10 +15,17 @@ def get_args():
                         choices= ["LeNet", 
                                   "ResNet18",
                                   "LSTM",
+<<<<<<< HEAD
                                   "VAE"],
+=======
+                                  "BERT",
+                                  "DistilBERT"],
+>>>>>>> d3416a5e09659943e8f16239188d891fb0e518fe
                         help='model type')
     parser.add_argument('--optim', default='AggMo', type=str, required=True,
-                        choices= ["Adam", 
+                        choices= ["Adam",
+                                  "AMSGrad",
+                                  "AdamW", 
                                   "AggMo", 
                                   "QHM", 
                                   "QHAdam"],
@@ -33,18 +40,47 @@ def get_args():
                         help='device to train')
     parser.add_argument('--valid_rate', default=0.1, type=float,
                         help='Valid split rate')
-    parser.add_argument('--betas', default=0.9, type=float,
-                        help='betas')
     # Text Classification
     parser.add_argument('--max_length', default=64, type=int, 
                         help='Max sequence length')
 
+    # Adam parameter
+    parser.add_argument('--adam_beta1', default=0.9, type=float,
+                        help='adam beta1')
+    parser.add_argument('--adam_beta2', default=0.999, type=float,
+                        help='adam beta2')
+
+    # AMSGrad parameter
+    parser.add_argument('--amsgrad_beta1', default=0.9, type=float,
+                        help='amsgrad beta1')
+    parser.add_argument('--amsgrad_beta2', default=0.999, type=float,
+                        help='amsgrad beta2')
+
+    # AdamW parameter
+    parser.add_argument('--adamw_beta1', default=0.9, type=float,
+                        help='adamw beta1')
+    parser.add_argument('--adamw_beta2', default=0.999, type=float,
+                        help='adamw beta2')
+    parser.add_argument('--adamw_weight_decay', default=0.01, type=float,
+                        help='adamw weight decay')
+
     # AggMo parameters
-    parser.add_argument('--num_betas', default=3, type=int,
+    parser.add_argument('--aggmo_num_betas', default=3, type=int,
                         help='Number of betas')
 
     # QHM parameter
-    parser.add_argument('--nu', default=0.7, type=float,
+    parser.add_argument('--qhm_nu', default=0.7, type=float,
                         help='v in the paper')
+    parser.add_argument('--qhm_beta', default=0.9, type=float,
+                        help='v in the paper')
+    # QHAdam parameter
+    parser.add_argument('--qhadam_nu1', default=1.0, type=float,
+                        help='qhadam v1')
+    parser.add_argument('--qhadam_nu2', default=1.0, type=float,
+                        help='qhadam v2')
+    parser.add_argument('--qhadam_beta1', default=0.9, type=float,
+                        help='qhadam beta1')
+    parser.add_argument('--qhadam_beta2', default=0.999, type=float,
+                        help='qhadam beta2')
     args = parser.parse_args()
     return args
