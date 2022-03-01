@@ -23,9 +23,8 @@ class Trainer():
         self.optimizer = self.get_optimizer()
         self.total_training_time = 0
         
-        self.reconstruction_loss = []
-        self.kl_divergence_loss = []
         self.fid = []
+        self.inception = []
         # self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones= milestones, gamma= 0.3)
 
     def get_optimizer(self):
