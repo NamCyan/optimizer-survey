@@ -36,6 +36,12 @@ elif args.model_name == "ResNet18":
 elif args.model_name == "LSTM":
     from models.LSTM import Net
     model = Net(num_classes= num_classes)
+elif args.model_name == "VAE":
+    from models.VAE import Net
+    model = Net()
+elif args.model_name == "NCSN":
+    from models.NCSN import Net
+    model = Net()
 
 model.to(args.device)
 random.seed(args.seed)
@@ -56,8 +62,13 @@ print("="*100)
 trainer = Trainer(args, model, loader_train, loader_valid, loader_test)
 trainer.train()
 
-test_loss, test_acc, test_f1, test_report = trainer.eval(trainer.model, loader_test)
+if args.task != "img_gen":
 
-print("="*100)
-print("Test: loss= {:.3f} || accuracy= {:.3f}% || F1= {:.3f}%".format(test_loss, test_acc, test_f1))
-print("Report \n", test_report)
+    test_loss, test_acc, test_f1, test_report = trainer.eval(trainer.model, loader_test)
+    
+    print("="*100)
+    print("Test: loss= {:.3f} || accuracy= {:.3f}% || F1= {:.3f}%".format(test_loss, test_acc, test_f1))
+    print("Report \n", test_report)
+    
+else:
+    pass
