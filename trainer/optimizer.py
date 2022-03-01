@@ -22,8 +22,7 @@ def get_optimizer(args, model):
       optimizer = optim.AggMo(model.parameters(), lr=args.lr, betas= betas)
       return optimizer
     elif args.optim == "QHM":
-        betas = args.qhm_beta
-        optimizer = optim.QHM(model.parameters(), lr=args.lr, momentum=betas, nu=args.qhm_nu)
+        optimizer = optim.QHM(model.parameters(), lr=args.lr, momentum=args.qhm_beta, nu=args.qhm_nu)
         return optimizer
     elif args.optim == "QHAdam":
         betas = [args.qhadam_beta1, args.qhadam_beta2]
