@@ -11,6 +11,10 @@ args = get_args()
 list_args = args._get_kwargs()
 
 optim_parameter_path = "../results/optim_parameters.json"
+if not os.path.isfile(optim_parameter_path):
+    with open(optim_parameter_path, "w") as f:
+        json.dump({}, f, indent= 4)
+
 with open(optim_parameter_path, "r") as f:
     exp_ids = json.load(f)
 

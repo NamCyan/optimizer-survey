@@ -38,6 +38,10 @@ class Trainer():
         print("Training ...")
 
         for epoch in range(self.args.epochs):
+            train_loss = []
+            train_preds = []
+            train_golds = []
+
             self.model.train()
             time1 = time()
             for step, batch in enumerate(self.train_data):
@@ -53,6 +57,14 @@ class Trainer():
                     input, label = batch
                     logits = self.model(input)
                     loss = nn.CrossEntropyLoss()(logits, label)
+                
+                output = F.log_softmax(logits, dim=1)
+                _, pred = output.max(1)
+
+                train_loss.append(loss.item())
+                train_preds.extend(pred.cpu().numpy())
+                train_golds.extend(label.cpu().numpy())
+
                 loss.backward()
 
                 nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
@@ -63,7 +75,8 @@ class Trainer():
             self.total_training_time += (time2 - time1)
             # scheduler.step()
             valid_loss, valid_acc, valid_macro_f1, valid_cls_report = self.eval(self.model, self.valid_data)
-            train_loss, train_acc, train_macro_f1, train_cls_report = self.eval(self.model, self.train_data)
+            train_loss, train_acc, train_macro_f1 = np.mean(train_loss), accuracy_score(train_golds, train_preds), f1_score(train_golds, train_preds, average='macro')
+            
             self.train_losses.append(train_loss)
             self.train_accs.append(train_acc)
             self.valid_losses.append(valid_loss)
@@ -72,8 +85,6 @@ class Trainer():
             if valid_loss < best_valid_loss:
                 best_valid_loss = valid_loss
                 self.best_model = self.get_model(self.model)
-
-            # print("Epoch {:3d} | Train: loss= {:.3f}, acc= {:.3f}% || Valid: loss= {:.3f}, acc= {:.3f}%, macro_f1= {:.3f}% || Best macro_f1: {:.3f}% || Time= {:.3f}s".format(epoch + 1, train_loss, train_acc, valid_loss, valid_acc*100, valid_macro_f1*100, best_valid_macro_f1*100, time2- time1))
             
             if epoch % 10 == 0 or epoch == self.args.epochs - 1:
                 print("Epoch {:3d} | Train: loss= {:.3f}, acc= {:.3f}% || ".format(epoch + 1, train_loss, train_acc*100), end= "")
@@ -91,8 +102,8 @@ class Trainer():
                               None, None, None,
                               time2 - time1])
 
-        print("Training time: {}s".format(self.total_training_time))
-        print("Epoch time: {}s".format(self.total_training_time/self.args.epochs))
+        print("Training time: {:.3f}s".format(self.total_training_time))
+        print("Epoch time: {:.3f}s".format(self.total_training_time/self.args.epochs))
         self.set_model_(self.model, self.best_model) # set back to the best model found
 
     def eval(self, model, data):
