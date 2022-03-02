@@ -9,6 +9,8 @@ import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
 from copy import deepcopy
+from trainer.optimizer import get_optimizer
+
 
 class Trainer():
     def __init__(self, args, model, train_data, valid_data, test_data, log_file = None):
@@ -20,40 +22,18 @@ class Trainer():
         self.train_data = train_data
         self.valid_data = valid_data
         self.test_data = test_data
-        self.optimizer = self.get_optimizer()
+        self.T = len(train_data)*args.epochs
+        self.optimizer = get_optimizer(args, self.model, self.T)
         self.total_training_time = 0
         
         self.fid = []
         self.inception = []
         # self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones= milestones, gamma= 0.3)
 
-    def get_optimizer(self):
-        if self.args.optim == "Adam":
-            return torch.optim.Adam(self.model.parameters(), lr=self.args.lr)
-        elif self.args.optim == "SGD":
-            return torch.optim.SGD(self.model.parameters(), lr=self.args.lr)
-        elif self.args.optim == "AggMo":
-          betas = []
-          for i in range(self.args.num_betas):
-              beta = 1 - math.pow(0.1, i)
-              betas.append(beta)
-          optimizer = optim.AggMo(self.model.parameters(), lr=self.args.lr, betas= betas)
-          return optimizer
-        elif self.args.optim == "QHM":
-            betas = self.args.betas
-            optimizer = optim.QHM(self.model.parameters(), lr=self.args.lr, momentum=betas, nu=self.args.nu)
-            return optimizer
-        elif self.args.optim == "QHAdam":
-            betas = [0.9, 0.999]
-            optimizer = optim.QHAdam(self.model.parameters(), lr=self.args.lr, nu=self.args.nu, betas= betas)
-            return optimizer
-        else:
-            raise Exception('Have not implement {} optimizer yet'.format(self.args.optim))
-
     def train(self):
         self.model.train()
         
-        best_valid_loss = 1e8
+        best_FID = 0
         self.best_model = None
         
         print("Training ...")
@@ -61,79 +41,61 @@ class Trainer():
         for epoch in range(self.args.epochs):
             # self.model.train()
             time1 = time()
-            Reconstruction_loss = 0
-            Kl_divergence_loss = 0
             Total_loss = 0
-            FID = 0
             for step, batch in enumerate(self.train_data):
                 batch = [t.to(self.device) for t in batch]
-                input, _ = batch
-                (mean, logvar), x_reconstructed = self.model(input)
-                reconstruction_loss = self.model.reconstruction_loss(x_reconstructed, input)
-                kl_divergence_loss = self.model.kl_divergence_loss(mean, logvar)
-                loss = reconstruction_loss + kl_divergence_loss
+                x_real, _ = batch
+                x_reconstructed, mean, logvar = self.model(x_real)
+                loss = self.model.loss_function(x_reconstructed, x_real, mean, logvar)
+                # print(loss.item())
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
-                # print(type(input), input.shape, type(x_reconstructed), x_reconstructed.shape)
-                fid = self.model.calculate_fid(input, x_reconstructed)
-                FID += fid.item()
-                Reconstruction_loss += reconstruction_loss.item()
-                Kl_divergence_loss += kl_divergence_loss.item()
+                
                 Total_loss += loss.item()
+                # print(loss.item())
                 
             time2 = time()
-
             self.total_training_time += (time2 - time1)
-            # scheduler.step()
+            # Total_loss = Total_loss/len(self.train_data.dataset)
             
-            Reconstruction_loss /= step + 1
-            Kl_divergence_loss /= step + 1
-            Total_loss /= step + 1
-            FID /= step + 1
-            self.reconstruction_loss.append(Reconstruction_loss)
-            self.kl_divergence_loss.append(Kl_divergence_loss)
-            self.fid.append(FID)
+            Total_loss = Total_loss/100
 
-            if Total_loss < best_valid_loss:
-                best_valid_loss = Total_loss
-                self.best_model = self.get_model(self.model)
-
-
+            # print('hehe')
             if epoch % 1 == 0 or epoch == self.args.epochs - 1:
-                print("Epoch {:3d} |Total_loss = {:.3f}, Reconstruction loss = {:.3f}, Kl divergence loss = {:.3f}, FID = {:.3f} || ".format(epoch + 1,Total_loss, Reconstruction_loss, Kl_divergence_loss, FID), end= "")
+                fid_score, inception_score, test_loss = self.eval(self.model, self.valid_data)
+                if fid_score > best_FID:
+                    best_FID = fid_score
+                    self.best_model = self.get_model(self.model)
+                    
+                self.model.sample(64, epoch)
+                    
+                print("Epoch {:3d} |Train_loss = {:.3f}, Test_loss = {:.3f}, FID = {:.3f}, Inception = {:.3f} || ".format(epoch + 1,Total_loss, test_loss, fid_score, inception_score), end= "\n")
 
 
         print("Training time: {}s".format(self.total_training_time))
         print("Epoch time: {}s".format(self.total_training_time/self.args.epochs))
         self.set_model_(self.model, self.best_model) # set back to the best model found
 
-    def eval(self, model, data):
-        self.model.eval()
-        losses = []
-        preds = []
-        golds = []
-
-        for step, batch in enumerate(data):
-            batch = [t.to(self.device) for t in batch]
-            input, label = batch
-            logits = model(input)
-            loss = nn.CrossEntropyLoss()(logits, label)
-
-            output = F.log_softmax(logits, dim=1)
-            _, pred = output.max(1)
-
-            assert len(label) == len(pred)
+    def eval(self, model, dataloader):
+        model.eval()
+        test_loss= 0
+        fid_score, inception_score = 0, 0
+        with torch.no_grad():
+            for x_real, _ in dataloader:
+                x_real = x_real.cuda()
+                recon, mu, log_var = model(x_real)
+                
+                # sum up batch loss
+                test_loss += model.loss_function(recon, x_real, mu, log_var).item()
             
-            preds.extend(pred.cpu().numpy())
-            golds.extend(label.cpu().numpy())
-            losses.append(loss.item())
+        # test_loss /= len(dataloader.dataset)
+        test_loss = test_loss/100
+        
 
-        loss = np.mean(losses)
-        acc = accuracy_score(golds, preds)
-        macro = f1_score(golds, preds, average='macro')
-        report = classification_report(golds, preds)
-        return loss, acc, macro, report
+        return fid_score, inception_score, test_loss
+
+    
 
     @staticmethod
     def set_model_(model, state_dict):

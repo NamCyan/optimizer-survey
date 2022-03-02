@@ -10,6 +10,8 @@ from numpy import iscomplexobj
 from numpy import asarray
 from numpy.random import shuffle
 from scipy.linalg import sqrtm
+from torchvision.utils import save_image
+import torch.nn.functional as F
 
 class Net(nn.Module):
     def __init__(self, label='mnist', image_size=28, channel_num=1, z_size=2):
@@ -46,6 +48,7 @@ class Net(nn.Module):
         return F.sigmoid(self.fc6(h)) 
     
     def forward(self, x):
+        # print(type(x))
         mu, log_var = self.encoder(x.view(-1, 784))
         z = self.sampling(mu, log_var)
         return self.decoder(z), mu, log_var
@@ -72,6 +75,17 @@ class Net(nn.Module):
         
     def loss_function(self, recon_x, x, mu, log_var):
         BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
+        # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='mean')
         KLD = -0.5 * torch.sum(1 + log_var - mu.pow(2) - log_var.exp())
+        # KLD = -0.5 * torch.mean(1 + log_var - mu.pow(2) - log_var.exp())
+        # print(BCE)
+        # print(KLD) 
         return BCE + KLD
         
+        
+    def sample(self, num_of_sample, epoch):
+        with torch.no_grad():
+            
+            z = torch.randn(num_of_sample, 2).cuda()
+            sample = self.decoder(z).cuda()
+            save_image(sample.view(num_of_sample, 1, 28, 28), './results/sample/VAE_sample_' + str(epoch) + '.png')

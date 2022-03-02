@@ -15,12 +15,10 @@ def get_args():
                         choices= ["LeNet", 
                                   "ResNet18",
                                   "LSTM",
-<<<<<<< HEAD
-                                  "VAE"],
-=======
                                   "BERT",
-                                  "DistilBERT"],
->>>>>>> d3416a5e09659943e8f16239188d891fb0e518fe
+                                  "DistilBERT",
+                                  'VAE',
+                                  'NCSN'],
                         help='model type')
     parser.add_argument('--optim', default='AggMo', type=str, required=True,
                         choices= ["Adam",
@@ -28,7 +26,10 @@ def get_args():
                                   "AdamW", 
                                   "AggMo", 
                                   "QHM", 
-                                  "QHAdam"],
+                                  "QHAdam", 
+                                  'SGDM',
+                                  'DemonSGD', 
+                                  'DemonAdam'],
                         help='Optimizer')
     parser.add_argument('--epochs', default=100, type=int,
                         help='Number of training epochs')
@@ -82,5 +83,7 @@ def get_args():
                         help='qhadam beta1')
     parser.add_argument('--qhadam_beta2', default=0.999, type=float,
                         help='qhadam beta2')
+    parser.add_argument('--sgdm_momentum', default=0.9, type=float,
+                        help='sgdm_momentum')
     args = parser.parse_args()
     return args
