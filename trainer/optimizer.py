@@ -181,6 +181,7 @@ class DemonAdam(Optimizer):
             decay_rate = 1.0
         beta_decay = beta_init * decay_rate
         beta = beta_decay / ((1.0 - beta_init) + beta_decay)
+        self.iterations += 1
         return beta
         
     def __setstate__(self, state):
