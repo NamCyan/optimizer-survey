@@ -54,16 +54,16 @@ class Trainer():
                                               labels= labels)
                     loss, logits = outputs.loss, outputs.logits
                 else:
-                    input, label = batch
+                    input, labels = batch
                     logits = self.model(input)
-                    loss = nn.CrossEntropyLoss()(logits, label)
+                    loss = nn.CrossEntropyLoss()(logits, labels)
                 
                 output = F.log_softmax(logits, dim=1)
                 _, pred = output.max(1)
 
                 train_loss.append(loss.item())
                 train_preds.extend(pred.cpu().numpy())
-                train_golds.extend(label.cpu().numpy())
+                train_golds.extend(labels.cpu().numpy())
 
                 loss.backward()
 
