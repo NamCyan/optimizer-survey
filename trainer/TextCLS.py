@@ -123,9 +123,9 @@ class Trainer():
                                           labels= labels)
                 loss, logits = outputs.loss, outputs.logits
             else:
-                input, label = batch
+                input, labels = batch
                 logits = self.model(input)
-                loss = nn.CrossEntropyLoss()(logits, label)
+                loss = nn.CrossEntropyLoss()(logits, labels)
 
             output = F.log_softmax(logits, dim=1)
             _, pred = output.max(1)
@@ -133,7 +133,7 @@ class Trainer():
             assert len(label) == len(pred)
             
             preds.extend(pred.cpu().numpy())
-            golds.extend(label.cpu().numpy())
+            golds.extend(labels.cpu().numpy())
             losses.append(loss.item())
 
         loss = np.mean(losses)
