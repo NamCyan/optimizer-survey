@@ -1,13 +1,9 @@
-import torch.optim as optim
+import torch_optimizer as optim
 import torch
 import math
 from torch import Tensor
 from typing import List, Optional
-
-# from torch import _functional as F
 from torch.optim.optimizer import Optimizer
-# import torch.optim.SGD  as SGD
-# import torch.optim.Adam as Adam
 from trainer.demon_utils import sgd, adam
 
 
@@ -52,12 +48,12 @@ class _RequiredParameter(object):
         return "<required parameter>"
 
 required = _RequiredParameter()
-
+        
 class DemonSGD(Optimizer):
     r"""
     Demon - SGD - pytorch
     T: total number of iterations
-    
+
     """
 
     def __init__(self, T, params, lr=required, momentum=0, dampening=0,
@@ -76,7 +72,7 @@ class DemonSGD(Optimizer):
             raise ValueError("Nesterov momentum requires a momentum and zero dampening")
         super(DemonSGD, self).__init__(params, defaults)
         self.T = T
-        self._iterations = 1
+        self._iterations =  1
         
     # see Algorithm 1 in the paper
     def _momentum_decay(self, beta_init):
@@ -88,7 +84,7 @@ class DemonSGD(Optimizer):
         beta = beta_decay / ((1.0 - beta_init) + beta_decay)
         self._iterations += 1
         return beta
-    
+
     def __setstate__(self, state):
         super().__setstate__(state)
         for group in self.param_groups:
@@ -99,7 +95,6 @@ class DemonSGD(Optimizer):
     @torch.no_grad()
     def step(self, closure=None):
         """Performs a single optimization step.
-
         Args:
             closure (callable, optional): A closure that reevaluates the model
                 and returns the loss.
@@ -113,16 +108,14 @@ class DemonSGD(Optimizer):
             params_with_grad = []
             d_p_list = []
             momentum_buffer_list = []
-            weight_decay = group['weight_decay']
-            momentum = self._momentum_decay(group['momentum'])
-            dampening = group['dampening']
-            nesterov = group['nesterov']
-            lr = group['lr']
+            has_sparse_grad = False
 
             for p in group['params']:
                 if p.grad is not None:
                     params_with_grad.append(p)
                     d_p_list.append(p.grad)
+                    if p.grad.is_sparse:
+                        has_sparse_grad = True
 
                     state = self.state[p]
                     if 'momentum_buffer' not in state:
@@ -131,13 +124,16 @@ class DemonSGD(Optimizer):
                         momentum_buffer_list.append(state['momentum_buffer'])
 
             sgd(params_with_grad,
-                  d_p_list,
-                  momentum_buffer_list,
-                  weight_decay=weight_decay,
-                  momentum=momentum,
-                  lr=lr,
-                  dampening=dampening,
-                  nesterov=nesterov)
+                d_p_list,
+                momentum_buffer_list,
+                weight_decay=group['weight_decay'],
+                momentum=self._momentum_decay(group['momentum']),
+                lr=group['lr'],
+                dampening=group['dampening'],
+                nesterov=group['nesterov'],
+                maximize=group['maximize'],
+                has_sparse_grad=has_sparse_grad,
+                foreach=group['foreach'])
 
             # update momentum_buffers in state
             for p, momentum_buffer in zip(params_with_grad, momentum_buffer_list):
