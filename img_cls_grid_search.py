@@ -21,7 +21,7 @@ for optimizer in optimizers:
     
     optimizer_param[optimizer]["lr"] = lrs
     if optimizer == "AggMo":
-        optimizer_param[optimizer]["num_betas"] = list(range(2,7))
+        optimizer_param[optimizer]["aggmo_num_betas"] = list(range(2,7))
     elif optimizer == "Adam" or "DemonAdam":
         optimizer_param[optimizer]["adam_beta1"] = betas
     elif  optimizer == "AdamW":
