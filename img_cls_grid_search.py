@@ -24,6 +24,8 @@ for optimizer in optimizers:
         optimizer_param[optimizer]["aggmo_num_betas"] = list(range(2,7))
     elif optimizer == "Adam" or optimizer == "DemonAdam":
         optimizer_param[optimizer]["adam_beta1"] = betas
+    elif optimizer == "AMSGrad":
+        optimizer_param[optimizer]["amsgrad_beta1"] = betas
     elif  optimizer == "AdamW":
         optimizer_param[optimizer]["adamw_weight_decay"] = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005]
     elif  optimizer == "QHM":
