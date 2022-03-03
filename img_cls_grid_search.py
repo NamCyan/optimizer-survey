@@ -47,3 +47,5 @@ print("Total run exp:", len(cmds))
 for cmd in cmds:
     print("Running:", cmd)
     os.system(cmd)
+
+print("==Finish=="*100)
