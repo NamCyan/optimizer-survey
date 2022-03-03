@@ -48,7 +48,7 @@ def get_args():
     
     # SGDM + Demon SGD parameter
     parser.add_argument('--sgdm_momentum', default=0.9, type=float,
-                        help='adam beta1')
+                        help='sgdm momentum')
 
     # Adam + Demon Adam parameter
     parser.add_argument('--adam_beta1', default=0.9, type=float,
