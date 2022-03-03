@@ -16,7 +16,9 @@ def get_args():
                                   "ResNet18",
                                   "LSTM",
                                   "BERT",
-                                  "DistilBERT"],
+                                  "DistilBERT",
+                                  'VAE',
+                                  'NCSN'],
                         help='model type')
     parser.add_argument('--optim', default='AggMo', type=str, required=True,
                         choices= ["Adam",
@@ -24,7 +26,10 @@ def get_args():
                                   "AdamW", 
                                   "AggMo", 
                                   "QHM", 
-                                  "QHAdam"],
+                                  "QHAdam",
+                                  'SGDM',
+                                  'DemonSGD', 
+                                  'DemonAdam'],
                         help='Optimizer')
     parser.add_argument('--epochs', default=100, type=int,
                         help='Number of training epochs')
@@ -40,7 +45,12 @@ def get_args():
     parser.add_argument('--max_length', default=64, type=int, 
                         help='Max sequence length')
 
-    # Adam parameter
+    
+    # SGDM + Demon SGD parameter
+    parser.add_argument('--sgdm_momentum', default=0.9, type=float,
+                        help='adam beta1')
+
+    # Adam + Demon Adam parameter
     parser.add_argument('--adam_beta1', default=0.9, type=float,
                         help='adam beta1')
     parser.add_argument('--adam_beta2', default=0.999, type=float,

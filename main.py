@@ -74,6 +74,12 @@ elif args.model_name == "BERT":
 elif args.model_name == "DistilBERT":
     from transformers import DistilBertForSequenceClassification
     model = DistilBertForSequenceClassification.from_pretrained("distilbert-base-cased", num_labels= num_classes)
+elif args.model_name == "VAE":
+    from models.VAE import Net
+    model = Net()
+elif args.model_name == "NCSN":
+    from models.NCSN import Net
+    model = Net()
 
 if args.task == "img_cls":
     from trainer.ImageCLS import Trainer
@@ -104,20 +110,22 @@ print("="*100)
 
 trainer.train()
 
-time1= time()
-test_loss, test_acc, test_f1, test_report = trainer.eval(trainer.model, loader_test)
-time2= time()
-with open(args.log_file, "a") as f:
-    writer = csv.writer(f)
-    writer.writerow([args.epochs,
-                  None, None, None, 
-                  None, None, None,
-                  test_loss, test_acc, test_f1,
-                  time2 - time1])
+if args.task != "img_gen":
+    time1= time()
+    test_loss, test_acc, test_f1, test_report = trainer.eval(trainer.model, loader_test)
+    time2= time()
+    with open(args.log_file, "a") as f:
+        writer = csv.writer(f)
+        writer.writerow([args.epochs,
+                      None, None, None, 
+                      None, None, None,
+                      test_loss, test_acc, test_f1,
+                      time2 - time1])
+    print("="*100)
+    print("Test: loss= {:.3f} || accuracy= {:.3f}% || F1= {:.3f}%".format(test_loss, test_acc, test_f1))
+    print("Report \n", test_report)
+else:
+    pass
 
-print("="*100)
-print("Test: loss= {:.3f} || accuracy= {:.3f}% || F1= {:.3f}%".format(test_loss, test_acc, test_f1))
-print("Report \n", test_report)
-
-model_save_path = args.log_file.replace(".csv", ".pt").replace("log", "models")
-torch.save(trainer.model.state_dict(), model_save_path)
+# model_save_path = args.log_file.replace(".csv", ".pt").replace("log", "models")
+# torch.save(trainer.model.state_dict(), model_save_path)
