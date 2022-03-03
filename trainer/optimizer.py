@@ -16,7 +16,7 @@ def get_optimizer(args, model, T=None):
         return DemonAdam(T, model.parameters(), lr=args.lr, betas= betas)
     elif args.optim == "AMSGrad":
         betas = [args.amsgrad_beta1, args.amsgrad_beta1]
-        return torch.optim.AMSGrad(model.parameters(), lr=args.lr, betas= betas, amsgrad=True)
+        return torch.optim.Adam(model.parameters(), lr=args.lr, betas= betas, amsgrad=True)
     elif args.optim == "AdamW":
         betas = [args.adamw_beta1, args.adamw_beta2]
         return torch.optim.AdamW(model.parameters(), lr=args.lr, betas= betas, weight_decay= args.adamw_weight_decay)
