@@ -43,6 +43,9 @@ elif args.model_name == "DistilBERT":
 if args.dataset == "cifar10":
     from loader import cifar10 as dataloader
     loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size)
+elif args.dataset == "mnist":
+    from loader import mnist as dataloader
+    loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size)
 elif args.dataset == "cola":
     from loader import cola as dataloader
     if "bert" in args.model_name.lower():
@@ -52,7 +55,7 @@ elif args.dataset == "cola":
 elif args.dataset == "imdb":
     from loader import imdb as dataloader
     if "bert" in args.model_name.lower():
-        loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length, tokenizer, args.model_name)
+        loader_train, loader_valid, loader_test, num_classes = dataloader.loadBERT(args.valid_rate, args.batch_size, args.max_length, tokenizer, args.model_name)
     else:
         loader_train, loader_valid, loader_test, num_classes = dataloader.load(args.valid_rate, args.batch_size, args.max_length, args.model_name)
 else:
