@@ -19,19 +19,19 @@ optimizer_param = {}
 for optimizer in optimizers:
     optimizer_param[optimizer] = {}
     
-    optimizer_param["lr"] = lrs
+    optimizer_param[optimizer]["lr"] = lrs
     if optimizer == "AggMo":
-        optimizer_param["num_betas"] = list(range(2,7))
+        optimizer_param[optimizer]["num_betas"] = list(range(2,7))
     elif optimizer == "Adam" or "DemonAdam":
-        optimizer_param["adam_beta1"] = betas
+        optimizer_param[optimizer]["adam_beta1"] = betas
     elif  optimizer == "AdamW":
-        optimizer_param["adamw_weight_decay"] = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005]
+        optimizer_param[optimizer]["adamw_weight_decay"] = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005]
     elif  optimizer == "QHM":
-        optimizer_param["qhm_beta"] = betas
+        optimizer_param[optimizer]["qhm_beta"] = betas
     elif  optimizer == "QHAdam":
-        optimizer_param["qhadam_beta1"] = betas
+        optimizer_param[optimizer]["qhadam_beta1"] = betas
     elif  optimizer == 'SGDM' or optimizer == 'DemonSGD':
-        optimizer_param["sgdm_momentum"] = betas
+        optimizer_param[optimizer]["sgdm_momentum"] = betas
 
 cmds = []
 
