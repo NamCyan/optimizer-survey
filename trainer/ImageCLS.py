@@ -22,7 +22,8 @@ class Trainer():
         self.train_data = train_data
         self.valid_data = valid_data
         self.test_data = test_data
-        self.optimizer = get_optimizer(args, self.model)
+        self.T = len(train_data)*args.epochs
+        self.optimizer = get_optimizer(args, self.model, self.T)
         self.total_training_time = 0
         self.train_losses, self.train_accs = [], []
         self.valid_losses, self.valid_accs = [], []
