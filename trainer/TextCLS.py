@@ -131,7 +131,7 @@ class Trainer():
             output = F.log_softmax(logits, dim=1)
             _, pred = output.max(1)
 
-            assert len(label) == len(pred)
+            assert len(labels) == len(pred)
             
             preds.extend(pred.cpu().numpy())
             golds.extend(labels.cpu().numpy())
