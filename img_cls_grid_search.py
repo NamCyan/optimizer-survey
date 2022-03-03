@@ -40,7 +40,7 @@ for model in models:
         param_name1, param_name2 = optimizer_param[optimizer].keys()
         for param_value1 in optimizer_param[optimizer][param_name1]:
             for param_value2 in optimizer_param[optimizer][param_name2]:
-                cmd = "python3 main.py --task img_cls --dataset cifar10 --epochs 1 --batch_size 128 --optim {} --model_name {} --{} {} --{} {} --device cuda".format(optimizer, model, param_name1, param_value1, param_name2, param_value2)
+                cmd = "python3 main.py --task img_cls --dataset cifar10 --epochs 100 --batch_size 128 --optim {} --model_name {} --{} {} --{} {} --device cuda".format(optimizer, model, param_name1, param_value1, param_name2, param_value2)
                 cmds.append(cmd)
 
 print("Total run exp:", len(cmds))

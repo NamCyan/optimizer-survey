@@ -6,6 +6,8 @@ import os
 
 def load(valid_rate, batch_size):
     savefolder = "../dat/cifar10/"
+    if not os.path.isdir(savefolder):
+        os.mkdir(savefolder)
     if os.path.isfile(os.path.join(savefolder, "train_{}.pth".format(batch_size))):
         train_loader = torch.load(os.path.join(savefolder,"train_{}.pth".format(batch_size)))
         valid_loader = torch.load(os.path.join(savefolder,"valid_{}.pth".format(batch_size)))
