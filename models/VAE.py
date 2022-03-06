@@ -14,7 +14,7 @@ from torchvision.utils import save_image
 import torch.nn.functional as F
 
 class Net(nn.Module):
-    def __init__(self, label='mnist', image_size=28, channel_num=1, z_size=2):
+    def __init__(self, label='mnist', image_size=28, channel_num=1, z_size=2, args = None):
     #     pass
     # def __init__(self, x_dim, h_dim1, h_dim2, z_dim):
         super(Net, self).__init__()
@@ -31,6 +31,7 @@ class Net(nn.Module):
         self.fc4 = nn.Linear(z_dim, h_dim2)
         self.fc5 = nn.Linear(h_dim2, h_dim1)
         self.fc6 = nn.Linear(h_dim1, x_dim)
+        self.args = args
         
     def encoder(self, x):
         h = F.relu(self.fc1(x))
@@ -45,7 +46,8 @@ class Net(nn.Module):
     def decoder(self, z):
         h = F.relu(self.fc4(z))
         h = F.relu(self.fc5(h))
-        return F.sigmoid(self.fc6(h)) 
+        h = F.sigmoid(self.fc6(h))
+        return h + 1e-12
     
     def forward(self, x):
         # print(type(x))
@@ -53,27 +55,9 @@ class Net(nn.Module):
         z = self.sampling(mu, log_var)
         return self.decoder(z), mu, log_var
         
-    def calculate_fid(self, images1, images2):
-        with torch.no_grad():
-            act1 = self.encoder(images1).view(images1.shape[0], -1).cpu().numpy()
-            # print(act1.shape)
-            mu1, sigma1 = act1.mean(axis=0), cov(act1, rowvar=False)
-            
-            act2 = self.encoder(images2).view(images1.shape[0], -1).cpu().numpy()
-            mu2, sigma2 = act2.mean(axis=0), cov(act2, rowvar=False)
-    
-            # calculate sum squared difference between means
-            ssdiff = numpy.sum((mu1 - mu2)**2.0)
-            # calculate sqrt of product between cov
-            covmean = sqrtm(sigma1.dot(sigma2))
-            # check and correct imaginary numbers from sqrt
-            if iscomplexobj(covmean):
-                covmean = covmean.real
-                # calculate score
-            fid = ssdiff + trace(sigma1 + sigma2 - 2.0 * covmean)
-        return fid
         
     def loss_function(self, recon_x, x, mu, log_var):
+        # print(recon_x.max(), x.max())
         BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='sum')
         # BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784), reduction='mean')
         KLD = -0.5 * torch.sum(1 + log_var - mu.pow(2) - log_var.exp())
@@ -88,4 +72,4 @@ class Net(nn.Module):
             
             z = torch.randn(num_of_sample, 2).cuda()
             sample = self.decoder(z).cuda()
-            save_image(sample.view(num_of_sample, 1, 28, 28), './results/sample/VAE_sample_' + str(epoch) + '.png')
+            save_image(sample.view(num_of_sample, 1, 28, 28), self.args.img_file + '_' + str(epoch) + '.png')

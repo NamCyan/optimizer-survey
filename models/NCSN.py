@@ -5,8 +5,8 @@ import functools
 import torch
 from torchvision.models import ResNet
 import torch.nn.functional as F
-from .pix2pix import init_net, UnetSkipConnectionBlock, get_norm_layer, init_weights, ResnetBlock, \
-    UnetSkipConnectionBlockWithResNet
+# from .pix2pix import init_net, UnetSkipConnectionBlock, get_norm_layer, init_weights, ResnetBlock, \
+#     UnetSkipConnectionBlockWithResNet
 
 
 class ConvResBlock(nn.Module):
@@ -159,7 +159,7 @@ class Net(nn.Module): #ResScore
     def forward(self, x):
         x = 2 * x - 1.
         res = self.deconvs(self.convs(x))
-        return res
+        return res + 1e-10
         
     def reconstruction_loss(self, x_reconstructed, x):
         return nn.BCELoss(size_average=False)(x_reconstructed, x) / x.size(0)
@@ -167,35 +167,10 @@ class Net(nn.Module): #ResScore
     def kl_divergence_loss(self, mean, logvar):
         return ((mean**2 + logvar.exp() - 1 - logvar) / 2).mean()
     
-    # calculate frechet inception distance
-    def calculate_fid(self, images1, images2):
+    # sample
+    def sample(self, num_of_sample, epoch):
         with torch.no_grad():
-            act1 = self.encoder(images1).view(images1.shape[0], -1).cpu().numpy()
-            # print(act1.shape)
-            mu1, sigma1 = act1.mean(axis=0), cov(act1, rowvar=False)
             
-            act2 = self.encoder(images2).view(images1.shape[0], -1).cpu().numpy()
-            mu2, sigma2 = act2.mean(axis=0), cov(act2, rowvar=False)
-    
-            # calculate sum squared difference between means
-            ssdiff = numpy.sum((mu1 - mu2)**2.0)
-            # calculate sqrt of product between cov
-            covmean = sqrtm(sigma1.dot(sigma2))
-            # check and correct imaginary numbers from sqrt
-            if iscomplexobj(covmean):
-                covmean = covmean.real
-                # calculate score
-            fid = ssdiff + trace(sigma1 + sigma2 - 2.0 * covmean)
-        return fid
-        
-    def sample(self, size):
-        z = Variable(
-            torch.randn(size, self.z_size).cuda() if self._is_on_cuda() else
-            torch.randn(size, self.z_size)
-        )
-        z_projected = self.project(z).view(
-            -1, self.kernel_num,
-            self.feature_size,
-            self.feature_size,
-        )
-        return self.decoder(z_projected).data
+            z = torch.randn(num_of_sample, 2).cuda()
+            sample = self.decoder(z).cuda()
+            save_image(sample.view(num_of_sample, 3, 32, 32), './results/sample/NCSN_sample_' + str(epoch) + '.png')
