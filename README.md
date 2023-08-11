@@ -50,12 +50,16 @@ In this task, we use the MNIST dataset to investigate the optimization algorithm
 | AdamW        | 74.028     | 2.262       | 4.548                |
 
 
-### Notable points
+## Notable points
 - All methods using the adaptive learning rate technique are sensitive to the large value of the initial learning rate.
 - QHM-based algorithms show effective and stable performance in all scenarios.
 - SGDM is the fastest optimizer since it contains a lack of overhead computation.
-More details can be found in our [technical report].
+More details can be found in our [technical report](https://github.com/NamCyan/Optimizer_Survey/blob/main/optimizer_survey_report.pdf).
 
-### Conclusion
+## Conclusion
 In this project, we surveyed gradient descent optimization algorithms. They are all techniques that have become popular in recent times. The experimental results show that: Methods belonging to the adaptive learning rate group give better performances. The Adam-based methods are often the leading methods of learning effectiveness (QHAdam, AdamW, Demon Adam). In addition, Demon’s decay momentum strategy also showed a clear effect when significantly improving the original versions of SGDM and Adam.
+
+## Contact us
+This work is done at Hanoi University of Science and Technology (HUST)
+If you have any discussion, please contact via nam.lh173264@gmail.com
 
