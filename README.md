@@ -61,7 +61,7 @@ In this task, we use the MNIST dataset to investigate the optimization algorithm
 - All methods using the adaptive learning rate technique are sensitive to the large value of the initial learning rate.
 - QHM-based algorithms show effective and stable performance in all scenarios.
 - SGDM is the fastest optimizer since it contains a lack of overhead computation.
-- 
+
 More details can be found in our [technical report](https://github.com/NamCyan/Optimizer_Survey/blob/main/asset/optimizer_survey_report.pdf).
 
 ## Conclusion
