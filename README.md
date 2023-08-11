@@ -21,7 +21,7 @@ This study investigates optimization algorithms in Deep Learning, focusing on Gr
 
 ## Experiments
 ### Image classification
-For this experiment, we utilize the CIFAR10 dataset. To assess both small and large model architectures, we employ LeNet and ResNet.
+For this experiment, we utilize the [CIFAR10](https://www.cs.toronto.edu/~kriz/cifar.html) dataset. To assess both small and large model architectures, we employ LeNet and ResNet.
 
 | LeNet/ResNet | Valid acc  | Valid F1    | Test acc     |Test F1     | Valid acc  | Valid F1    | Test acc   |Test F1     | Time complexity (s/epoch) |
 |:-------------|:-----------|------------:|-------------:|-----------:|-----------:|------------:|-----------:|-----------:|--------------------------:|
@@ -36,7 +36,7 @@ For this experiment, we utilize the CIFAR10 dataset. To assess both small and la
 |AdamW         | 64.540     | 64.081      | 63.110       | 62.755     | **76.000** | **75.885**  | 75.030     | 75.081     | 8.294/16.723              |
 
 ### Text classification
-We use the IMDb dataset for sentiment analysis, experiments are conducted using LSTM and BERT models.
+We use the [IMDB](https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews) dataset for sentiment analysis, experiments are conducted using LSTM and BERT models.
 
 | BERT/LSTM    | Valid acc  | Valid F1    | Test acc     |Test F1     | Valid acc  | Valid F1    | Test acc   |Test F1     | 
 |:-------------|:-----------|------------:|-------------:|-----------:|-----------:|------------:|-----------:|-----------:|
