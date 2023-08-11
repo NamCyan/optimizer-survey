@@ -1,7 +1,8 @@
 # Optimizer Survey
 
-## Abstract
+## Introduction
 This study investigates optimization algorithms in Deep Learning, focusing on Gradient Descent. We explore different tasks, including Image and Text classification, as well as Image generation, employing 9 distinct optimization algorithms. The findings indicate that Adam-based techniques, such as QHAdam, AdamW, and Demon Adam, frequently outperform other methods in terms of learning effectiveness.
+![image](https://github.com/NamCyan/Optimizer_Survey/blob/main/asset/intro.pdf)
 
 ## Experiment
 ### Image classification
@@ -54,7 +55,7 @@ In this task, we use the MNIST dataset to investigate the optimization algorithm
 - All methods using the adaptive learning rate technique are sensitive to the large value of the initial learning rate.
 - QHM-based algorithms show effective and stable performance in all scenarios.
 - SGDM is the fastest optimizer since it contains a lack of overhead computation.
-More details can be found in our [technical report](https://github.com/NamCyan/Optimizer_Survey/blob/main/optimizer_survey_report.pdf).
+More details can be found in our [technical report](https://github.com/NamCyan/Optimizer_Survey/blob/main/asset/optimizer_survey_report.pdf).
 
 ## Conclusion
 In this project, we surveyed gradient descent optimization algorithms. They are all techniques that have become popular in recent times. The experimental results show that: Methods belonging to the adaptive learning rate group give better performances. The Adam-based methods are often the leading methods of learning effectiveness (QHAdam, AdamW, Demon Adam). In addition, Demon’s decay momentum strategy also showed a clear effect when significantly improving the original versions of SGDM and Adam.
