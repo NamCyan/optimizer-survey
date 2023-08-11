@@ -61,5 +61,6 @@ In this project, we surveyed gradient descent optimization algorithms. They are 
 
 ## Contact us
 This work is done at Hanoi University of Science and Technology (HUST)
+
 If you have any discussion, please contact via nam.lh173264@gmail.com
 
