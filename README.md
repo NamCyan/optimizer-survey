@@ -1,4 +1,7 @@
 # Optimizer Survey
 
 ## Abstract
-This work makes a survey about optimization algorithms in Deep learning based on Gradient descent. We conduct various tasks such as Image classification, Text classification and Image generation using 9 optimization algorithms. The results show that The Adam-based methods are often the leading methods of learning effectiveness (QHAdam, AdamW, Demon Adam).
+This study investigates optimization algorithms in Deep Learning, focusing on Gradient Descent. We explore different tasks, including Image and Text classification, as well as Image generation, employing 9 distinct optimization algorithms. The findings indicate that Adam-based techniques, such as QHAdam, AdamW, and Demon Adam, frequently outperform other methods in terms of learning effectiveness.
+
+## Experiment
+### Image classification
