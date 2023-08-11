@@ -5,7 +5,7 @@ This study investigates optimization algorithms in Deep Learning, focusing on Gr
 <div align="center">
 
 <p align="center">
-  <img src="./asset/intro.pdf" width="300px" alt="gradient descent based algorithm">
+  <img src="./asset/introp.png" width="300px" alt="gradient descent based algorithm">
 </p>
 </div>
 
@@ -60,6 +60,7 @@ In this task, we use the MNIST dataset to investigate the optimization algorithm
 - All methods using the adaptive learning rate technique are sensitive to the large value of the initial learning rate.
 - QHM-based algorithms show effective and stable performance in all scenarios.
 - SGDM is the fastest optimizer since it contains a lack of overhead computation.
+- 
 More details can be found in our [technical report](https://github.com/NamCyan/Optimizer_Survey/blob/main/asset/optimizer_survey_report.pdf).
 
 ## Conclusion
