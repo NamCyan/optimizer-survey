@@ -5,9 +5,9 @@ This study investigates optimization algorithms in Deep Learning, focusing on Gr
 <div align="center">
 
 <p align="center">
-  <img src="./asset/intro.pdf" width="300px" alt="logo">
+  <img src="./asset/intro.pdf" width="300px" alt="gradient descent based algorithm">
 </p>
-<div>
+</div>
 
 ## Experiment
 ### Image classification
