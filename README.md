@@ -9,7 +9,7 @@ For this experiment, we utilize the CIFAR10 dataset. To assess both small and la
 
 | LeNet/ResNet | Valid acc  | Valid F1    | Test acc     |Test F1     | Valid acc  | Valid F1    | Test acc   |Test F1     | Time complexity (s/epoch) |
 |:-------------|:-----------|------------:|-------------:|-----------:|-----------:|------------:|-----------:|-----------:|--------------------------:|
-|SGDM          | 65.600     | 65.325      | 65.260       | 65.152     | 74.020     | 73.615      | 73.110     | 72.847     | 6.992/15.205              |             
+|SGDM          | 65.600     | 65.325      | 65.260       | 65.152     | 74.020     | 73.615      | 73.110     | 72.847     | **6.992/15.205**          |             
 |Adam          | 65.700     | 65.453      | 64.160       | 64.123     | 75.160     | 74.954      | 75.070     | 74.985     | 7.135/16.079              |
 |AggMo         | 65.560     | 65.031      | 65.490       | 65.109     | 72.760     | 72.367      | 71.990     | 71.641     | 6.966/16.027              |
 |QHM           | **67.220** | **66.638**  | **65.860**   | **65.523** | 74.320     | 74.064      | 73.140     | 73.000     | 7.111/16.006              |
@@ -39,7 +39,7 @@ In this task, we use the MNIST dataset to investigate the optimization algorithm
 
 | Optimizer    | FID        | IS          | Time complexity (min)|
 |:-------------|:-----------|------------:|---------------------:|
-| SGDM         | 93.535     | 2.090       | 4.403                |
+| SGDM         | 93.535     | 2.090       | **4.403**            |
 | DemonSGDM    | 82.751     | 2.197       | 4.447                |
 | DemonAdam    | 74.398     | 2.256       | 4.646                |
 | Adam         | 74.447     | 2.151       | 4.565                |
@@ -53,7 +53,8 @@ In this task, we use the MNIST dataset to investigate the optimization algorithm
 ### Notable points
 - All methods using the adaptive learning rate technique are sensitive to the large value of the initial learning rate.
 - QHM-based algorithms show effective and stable performance in all scenarios.
-More details can be found in our technical report.
+- SGDM is the fastest optimizer since it contains a lack of overhead computation.
+More details can be found in our [technical report].
 
 ### Conclusion
 In this project, we surveyed gradient descent optimization algorithms. They are all techniques that have become popular in recent times. The experimental results show that: Methods belonging to the adaptive learning rate group give better performances. The Adam-based methods are often the leading methods of learning effectiveness (QHAdam, AdamW, Demon Adam). In addition, Demon’s decay momentum strategy also showed a clear effect when significantly improving the original versions of SGDM and Adam.
