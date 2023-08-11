@@ -15,7 +15,7 @@ This study investigates optimization algorithms in Deep Learning, focusing on Gr
 <div align="center">
 
 <p align="center">
-  <img src="./asset/introp.png" width="800px" alt="gradient descent based algorithm">
+  <img src="./asset/introp.png" width="700px" alt="gradient descent based algorithm">
 </p>
 </div>
 
